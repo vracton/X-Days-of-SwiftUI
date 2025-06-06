@@ -2,7 +2,7 @@
 //  BetterRestTests.swift
 //  BetterRestTests
 //
-//  Created by Sonit Sahoo on 6/5/25.
+//  Created by vracto on 6/5/25.
 //
 
 import Testing
