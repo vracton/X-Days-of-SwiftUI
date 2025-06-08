@@ -40,9 +40,11 @@ struct ContentView: View {
     @State private var scoreText = ""
     @State private var numQs = 0
     @State private var numCorrect = 0
+    @State private var notChosen: Double = 1
     
     @State private var chosen = 0
     func flagClicked(_ n: Int) {
+        notChosen = 0.3
         numQs+=1
         chosen = n
         if n == correct {
@@ -56,6 +58,7 @@ struct ContentView: View {
     }
     
     func nextTurn() {
+        notChosen = 1
         if numQs == 8 {
             numQs=0
             numCorrect=0
@@ -89,7 +92,6 @@ struct ContentView: View {
                             .foregroundStyle(.secondary)
                             .font(.subheadline.weight(.heavy))
                         Text(countries[correct])
-
                             .font(.largeTitle.weight(.heavy))
                     }
                     
@@ -97,7 +99,21 @@ struct ContentView: View {
                         Button {
                             flagClicked(n)
                         } label: {
-                            FlagImage(image: countries[n])
+                            ZStack {
+                                FlagImage(image: countries[n])
+                                    .opacity(n != chosen ? notChosen : 1)
+                                    .rotation3DEffect(n==chosen && showingScore ? .degrees(notChosen*10/3*360) : .zero, axis: (x: 0, y: 1, z: 0))
+                                    .animation(.default, value: notChosen)
+                                if showingScore && n==chosen {
+                                    Rectangle()
+                                        .frame(width: 200, height: 100)
+                                    
+                                        .clipShape(.rect(cornerRadius: 16))
+                                        .foregroundStyle(n==correct ? .green : .red)
+                                        .opacity(notChosen*2)
+                                        .transition(.scale)
+                                }
+                            }
                         }
                     }
                 }
