@@ -108,7 +108,7 @@ struct EndView: View {
                 .foregroundStyle(.secondary)
             Text("\(numCorrect)/\(numQuestions) - \(String(format: "%.2f", Double(numCorrect)/Double(numQuestions)*100))%")
                 .font(.largeTitle.bold())
-            Text(numCorrect > 7/10*numQuestions ? "Good job!" : "Better luck next time!")
+            Text(numCorrect > numQuestions*7/10 ? "Good job!" : "Better luck next time!")
                 .font(.title2.bold())
             HStack {
                 Button("Retry") {
@@ -165,6 +165,7 @@ struct ContentView: View {
             withAnimation {
                 gameState = 2
             }
+            numCorrect = 0
             for q in questions {
                 if q.userAnswer == q.multiplicand * q.multiplier {
                     numCorrect += 1
@@ -197,7 +198,7 @@ struct ContentView: View {
             } else if gameState == 1 {
                 Color(red: 245/255, green: 224/255, blue: 220/255)
             } else if gameState == 2 {
-                if numCorrect > 7/10*numQuestions {
+                if numCorrect > numQuestions*7/10 {
                     Color(red: 166/255, green: 227/255, blue: 161/255)
                 } else {
                     Color(red: 235/255, green: 160/255, blue: 172/255)
