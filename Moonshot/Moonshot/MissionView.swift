@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MissionView: View {
-    struct CrewMember {
+    struct CrewMember: Hashable {
         let role: String
         let astronaut: Astronaut
         
@@ -59,9 +59,7 @@ struct MissionView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(crew, id: \.role) { mem in
-                            NavigationLink {
-                                AstronautView(astronaut: mem.astronaut, role: mem.role, missionName: mission.displayName)
-                            } label: {
+                            NavigationLink(value: mem) {
                                 VStack {
                                     Image(mem.id)
                                         .resizable()
@@ -96,6 +94,9 @@ struct MissionView: View {
         .navigationSubtitle(mission.formattedLaunchDate) //ios 26 !!
         .navigationBarTitleDisplayMode(.inline)
         .background(.darkBG)
+        .navigationDestination(for: CrewMember.self) { mem in
+            AstronautView(astronaut: mem, missionName: mission.displayName)
+        }
     }
 }
 

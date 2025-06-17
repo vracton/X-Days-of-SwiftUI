@@ -7,10 +7,9 @@
 
 import SwiftUI
 
-
 struct AstronautView: View {
-    let astronaut: Astronaut
-    let role: String
+    
+    let astronaut: MissionView.CrewMember
     let missionName: String
     
     var body: some View {
@@ -34,14 +33,14 @@ struct AstronautView: View {
                     Text("Biography")
                         .font(.title.bold())
                         .padding(.bottom, 5)
-                    Text(astronaut.description)
+                    Text(astronaut.desc)
                 }
                 .padding(.horizontal)
             }
             .padding(.bottom)
         }
         .navigationTitle(astronaut.name)
-        .navigationSubtitle("\(missionName) - \(role)") //ios 26 (again) !!
+        .navigationSubtitle("\(missionName) - \(astronaut.role)") //ios 26 (again) !!
         .navigationBarTitleDisplayMode(.inline)
         .background(.darkBG)
     }
@@ -49,7 +48,8 @@ struct AstronautView: View {
 
 #Preview {
     let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
+    let astronaut = MissionView.CrewMember(role: "Commander", astronaut: astronauts["armstrong"]!)
     
-    AstronautView(astronaut: astronauts["armstrong"]!, role: "Commander", missionName: "Apollo 11")
+    AstronautView(astronaut: astronaut, missionName: "Apollo 11")
         .preferredColorScheme(.dark)
 }

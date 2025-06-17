@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var showingAddView: Bool = false
+    let types = ["Personal", "Business"]
     
     @State private var expenses: Expenses = Expenses()
     
@@ -19,52 +19,39 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                if expenses.items.filter({$0.type=="Personal"}).count > 0 {
-                    Section("Personal") {
-                        ForEach(expenses.items) { item in
-                            if item.type == "Personal" {
-                                HStack {
-                                    Text(item.name)
-                                        .font(.headline)
-                                    Spacer()
-                                    Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                                        .font(.title2)
-                                        .fontWeight(item.amount < 10 ? .regular : (item.amount < 100 ? .semibold : .bold))
-                                        .underline(item.amount > 100)
+                ForEach(types, id: \.self) { type in
+                    if expenses.items.filter({$0.type==type}).count > 0 {
+                        Section(type) {
+                            ForEach(expenses.items) { item in
+                                if item.type == type {
+                                    HStack {
+                                        Text(item.name)
+                                            .font(.headline)
+                                        Spacer()
+                                        Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                                            .font(.title2)
+                                            .fontWeight(item.amount < 10 ? .regular : (item.amount < 100 ? .semibold : .bold))
+                                            .underline(item.amount > 100)
+                                    }
                                 }
                             }
+                            .onDelete(perform: removeExpense)
                         }
-                        .onDelete(perform: removeExpense)
-                    }
-                }
-                
-                if expenses.items.filter({$0.type=="Business"}).count > 0 {
-                    Section("Business") {
-                        ForEach(expenses.items) { item in
-                            if item.type == "Business" {
-                                HStack {
-                                    Text(item.name)
-                                        .font(.headline)
-                                    Spacer()
-                                    Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                                        .font(.title2)
-                                }
-                            }
-                        }
-                        .onDelete(perform: removeExpense)
                     }
                 }
             }
             .navigationTitle(Text("iExpense"))
             .toolbar {
-                Button("add test", systemImage: "plus") {
-                    showingAddView = true
+                NavigationLink(value: "AddView") {
+                    Image(systemName: "plus")
                 }
                 EditButton()
             }
-        }
-        .sheet(isPresented: $showingAddView) {
-            AddView(expenses: expenses)
+            .navigationDestination(for: String.self) { dest in
+                if dest == "AddView" {
+                    AddView(expenses: expenses, types: types)
+                }
+            }
         }
     }
 }
