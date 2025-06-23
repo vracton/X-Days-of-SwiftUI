@@ -67,4 +67,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: Book.self)
 }
