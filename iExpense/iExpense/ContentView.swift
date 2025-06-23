@@ -6,50 +6,64 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    let types = ["Personal", "Business"]
+    @Environment(\.modelContext) var modelContext
+    @Query var expenses: [Expense]
     
-    @State private var expenses: Expenses = Expenses()
-    
-    func removeExpense(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
-    }
-    
+    static let types = ["Personal", "Business"]
+    @State private var type = "Personal"
+    @State private var showPersonal: Bool = true
+    @State private var showBusiness: Bool = true
+    @State private var sortOrder: [SortDescriptor<Expense>] = [
+        SortDescriptor(\Expense.name),
+        SortDescriptor(\Expense.amount, order: .reverse)
+    ]
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(types, id: \.self) { type in
-                    if expenses.items.filter({$0.type==type}).count > 0 {
-                        Section(type) {
-                            ForEach(expenses.items) { item in
-                                if item.type == type {
-                                    HStack {
-                                        Text(item.name)
-                                            .font(.headline)
-                                        Spacer()
-                                        Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                                            .font(.title2)
-                                            .fontWeight(item.amount < 10 ? .regular : (item.amount < 100 ? .semibold : .bold))
-                                            .underline(item.amount > 100)
-                                    }
-                                }
-                            }
-                            .onDelete(perform: removeExpense)
+            ExpenseView(showPersonal: showPersonal, showBusiness: showBusiness, sortOrder: sortOrder)
+            .navigationTitle(Text("iExpense"))
+            .toolbar {
+                EditButton()
+                NavigationLink(value: "AddView") {
+                    Image(systemName: "plus")
+                }
+                Menu("More", systemImage: "ellipsis") {
+                    Picker(selection: $sortOrder) {
+                        Text("By Name").tag([
+                            SortDescriptor(\Expense.name),
+                            SortDescriptor(\Expense.amount, order: .reverse)
+                        ])
+                        Text("By Amount").tag([
+                            SortDescriptor(\Expense.amount, order: .reverse),
+                            SortDescriptor(\Expense.name)
+                        ])
+                    } label: {
+                        Image(systemName: "arrow.up.arrow.down")
+                        Text("Sort")
+                        Text(sortOrder[0].keyPath == \Expense.name ? "By Name" : "By Amount")
+                    }
+                    .pickerStyle(.menu)
+                    Menu("Filter", systemImage: "line.3.horizontal.decrease.circle") {
+                        Button {
+                            showPersonal.toggle()
+                        } label: {
+                            Image(systemName: showPersonal ? "checkmark" : "")
+                            Text("Personal")
+                        }
+                        Button {
+                            showBusiness.toggle()
+                        } label: {
+                            Image(systemName: showBusiness ? "checkmark" : "")
+                            Text("Business")
                         }
                     }
                 }
             }
-            .navigationTitle(Text("iExpense"))
-            .toolbar {
-                NavigationLink(value: "AddView") {
-                    Image(systemName: "plus")
-                }
-                EditButton()
-            }
             .navigationDestination(for: String.self) { dest in
                 if dest == "AddView" {
-                    AddView(expenses: expenses, types: types)
+                    AddView()
                 }
             }
         }

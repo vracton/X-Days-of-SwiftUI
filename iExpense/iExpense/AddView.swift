@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddView: View {
+    @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
-    
-    var expenses: Expenses
-    let types: [String]
+
+    private let types: [String] = ContentView.types
     
     @State private var name: String = "New Expense"
     @State private var amt: Double = 0.0
@@ -37,8 +38,8 @@ struct AddView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
-                        let expense = ExpenseItem(name: name, type: type, amount: amt)
-                        expenses.items.insert(expense, at: 0)
+                        let expense = Expense(name: name, type: type, amount: amt)
+                        modelContext.insert(expense)
                         dismiss()
                     }
                 }
@@ -49,5 +50,12 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView(expenses: Expenses(), types: ["Personal","Business"])
+    do {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: Expense.self, configurations: config)
+        return AddView()
+            .modelContainer(container)
+    } catch {
+        return Text("failed to create model container \(error.localizedDescription)")
+    }
 }
