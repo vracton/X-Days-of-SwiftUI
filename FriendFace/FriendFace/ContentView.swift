@@ -6,9 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    @State private var users: [User] = [User]()
+    @Environment(\.modelContext) var modelContext
+    @Query var users: [User]
+    
+    @State private var path: [User] = []
+    @State private var msg: String = "Loaded from SwiftData"
     
     func loadData() async {
         guard let url = URL(string: "https://www.hackingwithswift.com/samples/friendface.json") else {
@@ -20,14 +25,15 @@ struct ContentView: View {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             if let decoded = try? decoder.decode([User].self, from: data) {
-                users = decoded
+                for user in decoded {
+                    modelContext.insert(user)
+                }
+                print("fetched data")
             }
         } catch {
             print("Failed to fetch: \(error.localizedDescription)")
         }
     }
-    
-    @State private var path: [User] = []
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -48,11 +54,13 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("FriendFace")
+            .navigationSubtitle("\(users.count) Friends | \(msg)")
             .navigationDestination(for: User.self) { user in
                 UserView(user: user, users: users, path: $path)
             }
             .task {
                 if users.count == 0 {
+                    msg = "Just Fetched"
                     await loadData()
                 }
             }
@@ -62,4 +70,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: User.self)
 }
