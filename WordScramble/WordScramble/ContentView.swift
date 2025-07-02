@@ -116,6 +116,8 @@ struct ContentView: View {
                             Image(systemName: "\(word.count).circle.fill")
                             Text(word)
                         }
+                        .accessibilityElement()
+                        .accessibilityLabel("\(word), \(word.count) letters")
                     }
                 }
                 

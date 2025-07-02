@@ -34,10 +34,12 @@ struct ContentView: View {
             Button("Increment") {
                 value += 1
             }
+            //.accessibilityInputLabels(["increment","add","plus"]) - doesnt work because .ignore
 
             Button("Decrement") {
                 value -= 1
             }
+            //.accessibilityInputLabels(["decrement","minus","subtract"])
         }
         .accessibilityElement()
         .accessibilityLabel("value")
@@ -49,7 +51,7 @@ struct ContentView: View {
             case .decrement:
                 value-=1
             default:
-                print("couldnt handle")
+                print("couldn't handle")
             }
         }
         VStack {

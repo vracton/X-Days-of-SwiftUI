@@ -43,6 +43,19 @@ struct RatingView: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityElement()
+        .accessibilityLabel(label)
+        .accessibilityValue(rating == 1 ? "1 star" : "\(rating) stars")
+        .accessibilityAdjustableAction { dir in
+            switch dir {
+            case .increment:
+                if rating < maxRating { rating += 1 }
+            case .decrement:
+                if rating > 0 { rating -= 1 }
+            default:
+                break
+            }
+        }
     }
 }
 
