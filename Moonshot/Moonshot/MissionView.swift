@@ -42,6 +42,7 @@ struct MissionView: View {
                         width*0.7
                     }
                     .padding(.top)
+                    .accessibilityLabel("\(mission.displayName) logo")
                 
                 VStack(alignment: .leading) {
                     HorizDivider()
@@ -80,6 +81,8 @@ struct MissionView: View {
                                     }
                                 }
                                 .padding(.horizontal)
+                                .accessibilityElement()
+                                .accessibilityLabel("\(mem.name), \(mem.role)")
                             }
                             if mem.role != crew.last?.role {
                                 VertDivider()

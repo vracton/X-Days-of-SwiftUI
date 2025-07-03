@@ -27,6 +27,7 @@ struct AstronautView: View {
                             .strokeBorder(.lightBG, lineWidth: 2)
                     )
                     .padding(.top)
+                    .accessibilityLabel("Headshot of \(astronaut.name)")
                 
                 VStack(alignment: .leading) {
                     HorizDivider()

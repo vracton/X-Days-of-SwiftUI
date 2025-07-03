@@ -50,14 +50,17 @@ struct CheckoutView: View {
                     .init(color: .white, location: 0.8),
                 ], startPoint: .top, endPoint: .bottom)
                 VStack {
-                    AsyncImage(url: URL(string: "https://hws.dev/img/cupcakes@3x.jpg"), scale: 3) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } placeholder: {
-                        ProgressView()
+                    Group {
+                        AsyncImage(url: URL(string: "https://hws.dev/img/cupcakes@3x.jpg"), scale: 3) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } placeholder: {
+                            ProgressView()
+                        }
                     }
-                        .frame(height: 233)
+                    .frame(height: 233)
+                    .accessibilityElement()
                     
                     Text("Your total order is \(order.cost, format: .currency(code: Locale.current.currency?.identifier ?? "USD")).")
                         .font(.title.weight(.semibold))

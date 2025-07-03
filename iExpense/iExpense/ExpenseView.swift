@@ -46,6 +46,9 @@ struct ExpenseView: View {
                                         .fontWeight(item.amount < 10 ? .regular : (item.amount < 100 ? .semibold : .bold))
                                         .underline(item.amount > 100)
                                 }
+                                .accessibilityElement()
+                                .accessibilityLabel("\(item.name), \(item.amount)")
+                                .accessibilityHint(String(type))
                             }
                         }
                         .onDelete(perform: removeExpense)
@@ -61,4 +64,5 @@ struct ExpenseView: View {
         SortDescriptor(\Expense.name),
         SortDescriptor(\Expense.amount, order: .reverse)
     ])
+    .modelContainer(for: Expense.self)
 }

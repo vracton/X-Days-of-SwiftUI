@@ -74,6 +74,9 @@ struct ContentView: View {
                                     }
                                 }
                             }
+                            .accessibilityElement()
+                            .accessibilityLabel("\(m.displayName), \(m.formattedLaunchDate)")
+                            .accessibilityInputLabels([m.displayName, String(m.id)])
                         }
                         .listRowBackground(Color.darkBG)
                         .padding(.bottom, 7)
